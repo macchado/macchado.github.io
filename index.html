@@ -1,1 +1,48 @@
-teste
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"> </script>
+		<style type="text/css">
+			* {font-family: 'Roboto'}
+			div{padding: 10px}
+		</style>
+		<script> 
+			$(function () {
+			    function getFoxBit() {
+			        var jsonURL = 'https://api.blinktrade.com/api/v1/BRL/ticker?crypto_currency=BTC&callback=?';
+			        $.getJSON(jsonURL,
+
+			        function (result) {
+			        	var diff = result.sell - result.buy;
+			            var html = "<b>FoxBit</b>";
+			            html += "<hr/>";
+			            //html += "<br/>Moeda : R$ " + result.pair;
+			            html += "<br/>Mercado BTC : " + result.vol;
+			            html += "<br/>Mercado em R$ : R$ " + result.vol_brl;
+			            html += "<hr/>";
+			            html += "<br/>Valor da última venda: R$ " + result.last;
+			            html += "<hr/>";
+			            html += "<br/>Maior valor de venda : R$ " + result.high;
+			            html += "<br/>Menor valor de Venda : R$ " + result.low;
+			            html += "<hr/>";
+			            html += "<br/>Você compra por: R$ <b>" + result.sell + '</b>';
+			            html += "<br/>Você vende por: R$ " + result.buy;
+			            html += "<br/><br/>Diferença : R$ <b>" + diff.toFixed(2) + '</b>';
+			            $('#fox').html(html);
+			        });
+			    }
+			    var timer = setInterval(getFoxBit, 30000);
+			    getFoxBit();
+			});
+		</script>
+	</head>
+	<body>
+
+	  <div id="fox"></div>
+
+	</body>
+</html>
