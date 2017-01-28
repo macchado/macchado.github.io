@@ -18,6 +18,8 @@
 			        function (result) {
 			        	dados = result;
 			        	var diff = result.sell - result.buy;
+					document.title = result.sell;
+					
 			            var html = "";
 			            //html += "<br/>Moeda : R$ " + result.pair;
 			            //html += "<br/>Mercado BTC : " + result.vol;
