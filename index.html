@@ -3,10 +3,22 @@
 	<head>
 		<title></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"> </script>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+		<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+		
 		<style type="text/css">
-			* {font-family: 'Roboto'}
+			 /* {font-family: 'Roboto'} */
 			div{padding: 10px}
 		</style>
 		<script> 
@@ -17,20 +29,10 @@
 			        $.getJSON(jsonURL,
 			        function (result) {
 			        	dados = result;
-			        	var diff = result.sell - result.buy;
-					document.title = "Bitcoin: R$ "+result.sell;
+			        	
+						upTitle(result.sell);
 					
-			            var html = "";
-			            //html += "<br/>Moeda : R$ " + result.pair;
-			            //html += "<br/>Mercado BTC : " + result.vol;
-			           // html += "<br/>Mercado em R$ : R$ " + result.vol_brl;
-			            //html += "<hr/>";
-			            //html += "<br/>Valor da última venda: R$ " + result.last;
-			            //html += "<hr/>";
-			            html += "<br/>Valor de venda entre R$ " + result.high +  " e R$ " + result.low
-			            + "<br/><br/>Neste momento você compra 1 Bitcoin por R$ <b>" + result.sell + "</b> e vende por R$ " + result.buy
-			            + "<br/><br/>Resultando numa diferença entre compra e venda de R$ <b>" + diff.toFixed(2) + '</b>';
-			            $('#fox').html(html);
+						textQuote(dados);
 
 			            calc();
 			        });
@@ -38,6 +40,10 @@
 			    var timer = setInterval(getFoxBit, 30000);
 			    getFoxBit();
 			});
+
+			function upTitle(btc){
+				document.title = "Bitcoin: R$ "+btc;
+			}
 
 			function calc(){
 				var total_btc_comprado = 0;
@@ -59,41 +65,68 @@
 				} 
 				
 				//compra
-				taxa_btc_compra = getTaxa(valor_investido_btc);
+				taxa_btc_compra = getFee(valor_investido_btc);
 				total_btc_comprado = valor_investido_btc - taxa_btc_compra;
 				valor_taxa_compra = taxa_btc_compra * dados.buy;
 
 				//venda
-				taxa_btc_venda = getTaxa(total_btc_comprado);
+				taxa_btc_venda = getFee(total_btc_comprado);
 				total_btc_vender = total_btc_comprado - taxa_btc_venda;
 				valor_taxa_venda = taxa_btc_venda * dados.buy;
 
 				total_valor_vender = total_btc_vender * dados.buy;
 				total_prejuizo = valor - total_valor_vender;
 
+				var data = {};
 
-				var html = "Descontando as taxa de compra você terá <b>"+total_btc_comprado + "</b> bitcoins ";
- 				html += "<br/><br/>Você irá pagar R$ "+valor;
- 				html += "<br/><br/>Ao comprar será cobrada uma taxa R$ "+valor_taxa_compra.toFixed(2)+ " / BTC "+taxa_btc_compra;
+				data.total_btc_comprado = total_btc_comprado;
+				data.valor = valor;
+				data.valor_taxa_compra = valor_taxa_compra.toFixed(2);
+				data.taxa_btc_compra = taxa_btc_compra;
+				data.total_valor_vender = total_valor_vender.toFixed(2);
+				data.valor_taxa_compra = valor_taxa_compra.toFixed(2);
+				data.taxa_btc_venda = taxa_btc_venda;
+				data.total_prejuizo = total_prejuizo.toFixed(2);
+				data.total_btc_comprado  = total_btc_comprado;
+				data.valor = valor.toFixed(2);
+				data.vendaMinima = vendaMinima(total_btc_comprado, valor).toFixed(2);
+
+				textSimulation(data);
+			}
+
+			function textQuote(data){
+				var diff = data.sell - data.buy;
+				var html = "";
+	            
+	            html += "<br/>Neste momento você compra <b>1</b> Bitcoin por R$ <b>" + data.sell + "</b>";
+
+	            html += "<br/>e vende por R$ " + data.buy + ", a diferença é R$ " + diff.toFixed(2);
+
+	            html += "<br/><br/>O valor do Bitcoin nas últimas 24 horas ficou entre <b>R$ " + data.high +  "</b> e R$ <b>" + data.low+ "</b>";	
+	            
+	            $('#fox').html(html);
+			}
+
+			function textSimulation(data)
+			{
+				var html = "Descontando as taxa de compra você terá <b>"+data.total_btc_comprado + "</b> bitcoins ";
+ 				html += "<br/><br/>Você irá pagar R$ "+data.valor;
+ 				html += "<br/><br/>Ao comprar será cobrada uma taxa R$ "+data.valor_taxa_compra+ " / BTC "+data.taxa_btc_compra;
  				html += "<hr/>";
- 				html += "Se você vender seus bitcoins pelo mesmo valor, você receberá R$ "+total_valor_vender.toFixed(2);
- 				html += "<br/><br/>Será cobrada uma taxa R$ "+valor_taxa_compra.toFixed(2)+ " / BTC "+taxa_btc_venda;
- 				html += "<br/><br/>Assim você irá perder R$ -"+total_prejuizo.toFixed(2);
- 				html += "<br/><br/>A cotação ideal para venda é: R$ "+vendaMinima(total_btc_comprado, valor).toFixed(2);
-
-				$("#investimento").html(html);
-
-				//$("#valorbtc").val(valorBTC); 
-				//$("#valor").val(valor);
+ 				html += "Se você vender seus bitcoins pelo mesmo valor você receberá R$ "+data.total_valor_vender;
+ 				html += "<br/><br/>Será cobrada uma taxa R$ "+data.valor_taxa_compra+ " / BTC "+data.taxa_btc_venda;
+ 				html += "<br/><br/>Assim você irá perder R$ -"+data.total_prejuizo;
+ 				html += "<br/><br/>A cotação ideal para venda é de: R$ "+data.vendaMinima;
+ 				$("#investimento").html(html);
 			}
 
 			function vendaMinima(totalBtc, valorInvestido){
 				var cotacaoIdeal = valorInvestido / totalBtc;
-				cotacaoIdeal = cotacaoIdeal + getTaxa(totalBtc);
+				cotacaoIdeal = cotacaoIdeal + getFee(totalBtc);
 				return cotacaoIdeal;
 			}
 
-			function getTaxa(valor)
+			function getFee(valor)
 			{
 				var taxa = 0.50;
 				var valorTaxa = (taxa / 100) * valor;
@@ -117,15 +150,18 @@
 	</head>
 	<body>
 
-	  <div id="fox"></div>
+		<div class="container">
+		  <div id="fox"></div>
 
 
-	  <hr/>
+		  <hr/>
 
-	  &nbsp;&nbsp;Investindo agora &nbsp;&nbsp; 
-	  <input type="text" name="valorbtc" id="valorbtc" value="1" size="6" onchange="change(this.id);calc()" /> Bitcoin
-	  ou R$ <input type="text" name="valor" id="valor" value="0" size="10"  onchange="change(this.id);calc()" />  
-	  <div id="investimento"></div>
+		  &nbsp;&nbsp;Investindo agora &nbsp;&nbsp; 
+		  <input type="text" name="valorbtc" id="valorbtc" value="1" size="6" onchange="change(this.id);calc()" /> Bitcoin
+		  ou R$ <input type="text" name="valor" id="valor" value="0" size="10"  onchange="change(this.id);calc()" />  
+		  <div id="investimento"></div>
+
+	 	</div>
 	
 
 	 <script type="text/javascript">
@@ -141,3 +177,4 @@
 	</script>
 	</body>
 </html>
+151.101.56.133
