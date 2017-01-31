@@ -54,7 +54,7 @@
 				var total_valor_vender = 0;
 
 				var valor_investido_btc = $("#valorbtc").val().replace(',','.'); 
-				var valor = $("#valor").val().replace(',','.'); 
+				var valor = $("#valor").val().replace(',','.') * 1; 
 				var valor_taxa_compra = 0;
 				var valor_taxa_venda = 0;
 
@@ -79,8 +79,8 @@
 
 				var data = {};
 
-				data.total_btc_comprado = total_btc_comprado;
-				data.valor = valor;
+				data.total_btc_comprado = total_btc_comprado.toFixed(2);
+				data.valor = valor.toFixed(2);
 				data.valor_taxa_compra = valor_taxa_compra.toFixed(2);
 				data.taxa_btc_compra = taxa_btc_compra;
 				data.total_valor_vender = total_valor_vender.toFixed(2);
@@ -96,26 +96,24 @@
 			function textQuote(data){
 				var diff = data.sell - data.buy;
 				var html = "";
-	            
-	            html += "<br/>Neste momento você compra <b>1</b> Bitcoin por R$ <b>" + data.sell + "</b>";
 
-	            html += "<br/>e vende por R$ " + data.buy + ", a diferença é R$ " + diff.toFixed(2);
+	            html += "<br/>Neste momento você compra <b>1</b> Bitcoin por R$ <b>" + data.sell + "</b>\
+	             <br/>e vende por R$ " + data.buy + ", a diferença é R$ " + diff.toFixed(2)+"<br/><br/>\
+	             O valor do Bitcoin nas últimas 24 horas ficou entre <b>R$ " + data.high +  "</b> e R$ <b>" + data.low+ "</b>";
 
-	            html += "<br/><br/>O valor do Bitcoin nas últimas 24 horas ficou entre <b>R$ " + data.high +  "</b> e R$ <b>" + data.low+ "</b>";	
-	            
 	            $('#fox').html(html);
 			}
 
 			function textSimulation(data)
 			{
-				var html = "Descontando as taxa de compra você terá <b>"+data.total_btc_comprado + "</b> bitcoins ";
- 				html += "<br/><br/>Você irá pagar R$ "+data.valor;
- 				html += "<br/><br/>Ao comprar será cobrada uma taxa R$ "+data.valor_taxa_compra+ " / BTC "+data.taxa_btc_compra;
- 				html += "<hr/>";
- 				html += "Se você vender seus bitcoins pelo mesmo valor você receberá R$ "+data.total_valor_vender;
- 				html += "<br/><br/>Será cobrada uma taxa R$ "+data.valor_taxa_compra+ " / BTC "+data.taxa_btc_venda;
- 				html += "<br/><br/>Assim você irá perder R$ -"+data.total_prejuizo;
- 				html += "<br/><br/>A cotação ideal para venda é de: R$ "+data.vendaMinima;
+				var html = "Descontando as taxa de compra você terá <b>"+data.total_btc_comprado + "</b> bitcoins<br/><br/>\
+							Você irá pagar R$ "+data.valor+"<br/><br/>\
+			 				Ao comprar será cobrada uma taxa R$ "+data.valor_taxa_compra+ " / BTC "+data.taxa_btc_compra+"<hr/>\
+			 				Se você vender seus bitcoins pelo mesmo valor você receberá R$ "+data.total_valor_vender+"<br/><br/>\
+			 				Será cobrada uma taxa R$ "+data.valor_taxa_compra+ " / BTC "+data.taxa_btc_venda+"<br/><br/>\
+			 				Assim você irá perder R$ -"+data.total_prejuizo+"<br/><br/>\
+			 				A cotação ideal para venda é de: R$ "+data.vendaMinima;
+
  				$("#investimento").html(html);
 			}
 
