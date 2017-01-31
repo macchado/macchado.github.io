@@ -28,12 +28,9 @@
 			        var jsonURL = 'https://api.blinktrade.com/api/v1/BRL/ticker?crypto_currency=BTC&callback=?';
 			        $.getJSON(jsonURL,
 			        function (result) {
-			        	dados = result;
-			        	
-						upTitle(result.sell);
-					
-						textQuote(dados);
-
+			            dados = result;			        	
+				    upTitle(result.sell);
+				    textQuote(dados);
 			            calc();
 			        });
 			    }
@@ -42,7 +39,7 @@
 			});
 
 			function upTitle(btc){
-				document.title = "Bitcoin: R$ "+btc;
+			    document.title = "Bitcoin: R$ "+btc;
 			}
 
 			function calc(){
