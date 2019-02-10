@@ -97,9 +97,9 @@
 
           	
           	x.innerHTML +="<br/>";
-          	
+
           	for (var i = 0; i < results.length; i++) {
-          		x.innerHTML +="<br/>"+ results[i].formatted_address;
+          		x.innerHTML +="<hr/>"+ results[i].formatted_address + " - "+ getLink(results[i].formatted_address);
           	}
 
             if (results[0]) {
@@ -118,6 +118,10 @@
             window.alert('Geocoder failed due to: ' + status);
           }
         });
+      }
+
+      function getLink(addr){
+      	 return "<a href='https://www.google.com/search?q=sub100+%20"+addr+"' target='_blank'> sub100 </a>";
       }
 
 	function ll(y, x) { return new google.maps.LatLng(y, x); }
