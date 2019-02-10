@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="style.css">
   <script type="text/javascript">
 
+  	var x;
+
   	function initMap() {
        
         
@@ -16,14 +18,29 @@
 
   	
   	function load() {
+  	   x = document.getElementById("div");
 	 
 
-	  if (navigator.geolocation)
+	  if (navigator.geolocation){
+			navigator.geolocation.getCurrentPosition(showPosition)
+
+	    /*
 	    navigator.geolocation.watchPosition(gotPosition, function() {
 	      noGeolocation('Error: The Geolocation service failed.');
 	    }, { enableHighAccuracy: true, maximumAge: 10e3, timeout: 20e3 });
-	  else
+		*/
+	  }else{
 	    noGeolocation('Error: Your browser doesn\'t support geolocation.');
+	  }
+	}
+
+	function showPosition(position) {
+	   
+
+	  x.innerHTML = "Latitude: " + position.coords.latitude + 
+	  "<br>Longitude: " + position.coords.longitude; 
+
+	  gotPosition(position);
 	}
 
 	function noGeolocation(param){
@@ -39,8 +56,6 @@
 	    console.log(at.latitude + "," + at.longitude)
 
 	    geocodeLatLng(at.latitude, at.longitude);
-
-	    return at.latitude + "," + at.longitude;
 
 	 // pos = ll(at.latitude, at.longitude);
 	  /*
@@ -78,6 +93,15 @@
         geocoder.geocode({'location': latlng}, function(results, status) {
           if (status === 'OK') {
           	console.log(results);
+          	console.log(results[0].formatted_address);
+
+          	
+          	x.innerHTML +="<br/>";
+          	
+          	for (var i = 0; i < results.length; i++) {
+          		x.innerHTML +="<br/>"+ results[i].formatted_address;
+          	}
+
             if (results[0]) {
               /*map.setZoom(11);
               var marker = new google.maps.Marker({
@@ -98,12 +122,16 @@
 
 	function ll(y, x) { return new google.maps.LatLng(y, x); }
 
-	load();
   </script>
 </head>
 <body>
+  <div id="div"></div>
   <div id="map"></div>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBQauDFFJIqS5TWS4ULESqzqYAP1_g0DMY" type="text/javascript"></script> 
  <!-- <script src="index.js"></script> -->
+
+  <script type="text/javascript">
+  	load();
+  </script>
 </body>
 </html>
